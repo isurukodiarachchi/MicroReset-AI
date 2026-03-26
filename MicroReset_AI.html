@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicroReset AI — Smart Learning Break Generator</title>
+  <meta name="description" content="Turn your study break into a memory boost — powered by AI. Generate personalized learning break activities and test your recall." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e1117;
+      --card: #1c2333;
+      --card-border: #2a3347;
+      --accent: #4ade80;
+      --accent-dim: rgba(74, 222, 128, 0.12);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.12);
+      --blue: #60a5fa;
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.12);
+      --text: #e8eaf0;
+      --muted: #7a8499;
+      --muted-light: #9aa3b5;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-pill: 100px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 64px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    .app-header {
+      text-align: center;
+      margin-bottom: 32px;
+      max-width: 640px;
+      width: 100%;
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .brand-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      color: #0a1a0f;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .brand-name {
+      font-family: 'Nunito', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .brand-ai {
+      font-weight: 800;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .app-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .app-header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    /* ── SCREENS ─────────────────────────────────────── */
+    .screen { display: none; width: 100%; max-width: 640px; }
+    .screen.active { display: block; }
+
+    /* ── CARD ─────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+
+    /* ── FORM ─────────────────────────────────────── */
+    .form-group { margin-bottom: 22px; }
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted-light);
+      margin-bottom: 8px;
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237a8499' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 42px;
+      cursor: pointer;
+    }
+
+    select option { background: #1c2333; }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: var(--muted);
+    }
+
+    /* ── PILL TOGGLES ─────────────────────────────── */
+    .pill-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      padding: 8px 20px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: var(--muted-light);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .pill-btn.selected {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── BUTTONS ─────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a1a0f;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: #5ef09a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(74, 222, 128, 0.25);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--muted-light);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--muted-light);
+      color: var(--text);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-row .btn { flex: 1; }
+
+    /* ── ERROR ─────────────────────────────────── */
+    .error-msg {
+      font-size: 0.82rem;
+      color: var(--red);
+      margin-top: 6px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    .global-error {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: var(--radius-sm);
+      color: var(--red);
+      font-size: 0.88rem;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .global-error.visible { display: block; }
+
+    /* ── LOADING SCREEN ─────────────────────────── */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 340px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 3px solid rgba(74, 222, 128, 0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin-bottom: 22px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* ── ACTIVITY SCREEN ─────────────────────────── */
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      padding: 5px 13px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      border-radius: var(--radius-pill);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── PROGRESS DOTS ─────────────────────────── */
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--card-border);
+      transition: all 0.3s;
+    }
+
+    .dot.completed {
+      background: rgba(74, 222, 128, 0.35);
+      width: 9px;
+      height: 9px;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      width: 12px;
+      height: 12px;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+    }
+
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .activity-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .activity-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .activity-purpose {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.6;
+      border-left: 2px solid rgba(74, 222, 128, 0.3);
+      padding-left: 12px;
+      margin-bottom: 32px;
+    }
+
+    /* ── RECALL / FEEDBACK SCREEN ─────────────────── */
+    .screen-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .screen-label.amber { color: var(--amber); }
+    .screen-label.muted { color: var(--muted); }
+
+    .question-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 3vw, 1.35rem);
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    /* ── CLASSIFICATION BADGE ─────────────────────── */
+    .classification-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .classification-badge .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-green {
+      background: var(--accent-dim);
+      border: 1px solid rgba(74, 222, 128, 0.3);
+      color: var(--accent);
+    }
+    .badge-green .dot-indicator { background: var(--accent); }
+
+    .badge-amber {
+      background: var(--amber-dim);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--amber);
+    }
+    .badge-amber .dot-indicator { background: var(--amber); }
+
+    .badge-red {
+      background: var(--red-dim);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      color: var(--red);
+    }
+    .badge-red .dot-indicator { background: var(--red); }
+
+    .feedback-text {
+      font-size: 0.97rem;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--card-border);
+      margin: 24px 0;
+    }
+
+    .summary-text {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 480px) {
+      body { padding: 20px 12px 48px; }
+      .card { padding: 24px 20px; }
+      .btn-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="brand-lockup">
+      <span class="brand-icon">&#8635;</span>
+      <span class="brand-name">MicroReset <span class="brand-ai">AI</span></span>
+    </div>
+    <h1>Smart Learning Break Generator</h1>
+    <p>Turn your study break into a memory boost — powered by AI.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 1 · INPUT FORM                                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-form" class="screen active">
+    <div class="card">
+
+      <div id="global-error" class="global-error">⚠ Something went wrong. Please try again.</div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label class="form-label" for="subject">Subject</label>
+        <select id="subject">
+          <option value="Physics">Physics</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Biology">Biology</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="History">History</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="English">English</option>
+          <option value="Geography">Geography</option>
+          <option value="Economics">Economics</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Concept Learned -->
+      <div class="form-group">
+        <label class="form-label" for="concept">Concept Learned</label>
+        <input type="text" id="concept" placeholder="e.g. Momentum" autocomplete="off" />
+        <span id="concept-error" class="error-msg">Please enter the concept you learned.</span>
+      </div>
+
+      <!-- Energy Level -->
+      <div class="form-group">
+        <label class="form-label" for="energy">Energy Level</label>
+        <select id="energy">
+          <option value="Tired">Tired</option>
+          <option value="Normal" selected>Normal</option>
+          <option value="Energetic">Energetic</option>
+        </select>
+      </div>
+
+      <!-- Time Available -->
+      <div class="form-group">
+        <label class="form-label" for="time">Time Available</label>
+        <select id="time">
+          <option value="2 minutes">2 minutes</option>
+          <option value="5 minutes" selected>5 minutes</option>
+          <option value="10 minutes">10 minutes</option>
+        </select>
+      </div>
+
+      <!-- Activity Difficulty -->
+      <div class="form-group">
+        <label class="form-label">Activity Difficulty</label>
+        <div class="pill-group" id="difficulty-group">
+          <button class="pill-btn selected" data-value="Easy">Easy</button>
+          <button class="pill-btn" data-value="Medium">Medium</button>
+          <button class="pill-btn" data-value="Challenging">Challenging</button>
+        </div>
+      </div>
+
+      <!-- Number of Activities -->
+      <div class="form-group">
+        <label class="form-label">Number of Activities</label>
+        <div class="pill-group" id="count-group">
+          <button class="pill-btn" data-value="1">1</button>
+          <button class="pill-btn selected" data-value="2">2</button>
+          <button class="pill-btn" data-value="3">3</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="generate-btn" onclick="handleGenerate()">Generate Smart Break ✦</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 2 · LOADING                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-loading" class="screen">
+    <div class="card loading-screen">
+      <div class="spinner"></div>
+      <p class="loading-text">Creating your personalized break activities…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 3 · ACTIVITY DISPLAY                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-activity" class="screen">
+    <div class="card">
+      <!-- Summary tags -->
+      <div class="tags-row" id="summary-tags"></div>
+
+      <!-- Progress dots -->
+      <div class="progress-dots" id="progress-dots"></div>
+
+      <!-- Step label -->
+      <p class="step-label" id="step-label"></p>
+
+      <!-- Activity card -->
+      <p class="activity-title" id="activity-title"></p>
+      <p class="activity-text" id="activity-text"></p>
+      <p class="activity-purpose" id="activity-purpose"></p>
+
+      <button class="btn btn-primary" id="next-activity-btn" onclick="handleNextActivity()">Done — Next Activity →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 4 · RECALL QUESTION                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-question" class="screen">
+    <div class="card">
+      <p class="screen-label amber">🧠 Memory Check</p>
+      <p class="question-text" id="question-text"></p>
+
+      <div class="form-group">
+        <label class="form-label" for="answer-input">Your Answer</label>
+        <textarea id="answer-input" placeholder="Type your answer here…"></textarea>
+        <span id="answer-error" class="error-msg">Please write your answer before submitting.</span>
+      </div>
+
+      <button class="btn btn-primary" id="submit-btn" onclick="handleSubmitAnswer()">Submit Answer →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 5 · ANALYZING                                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-analyzing" class="screen">
+    <div class="card loading-screen">
+      <div class="spinner"></div>
+      <p class="loading-text">Analyzing your answer…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 6 · FEEDBACK                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-feedback" class="screen">
+    <div class="card">
+      <p class="screen-label muted">Your Result</p>
+
+      <div id="classification-badge" class="classification-badge">
+        <span class="dot-indicator"></span>
+        <span id="classification-text"></span>
+      </div>
+
+      <p class="feedback-text" id="feedback-text"></p>
+
+      <hr class="divider" />
+
+      <p class="screen-label muted">Quick Recap</p>
+      <p class="summary-text" id="summary-text"></p>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="resetApp()">← New Break</button>
+        <button class="btn btn-primary" onclick="resetApp()">Study Again ✦</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- JAVASCRIPT                                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <script>
+    // ── GROQ API ─────────────────────────────────────────────
+    const GROQ_KEY_ACTIVITIES = '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';  // Key for generating activities & question
+    const GROQ_KEY_ANALYZE    = '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';  // Key for analysing answers
+    const GROQ_URL            = 'https://api.groq.com/openai/v1/chat/completions';
+    const GROQ_MODEL          = 'llama-3.3-70b-versatile';
+
+    async function callGroq(prompt, apiKey) {
+      const res = await fetch(GROQ_URL, {
+        method : 'POST',
+        headers: {
+          'Content-Type' : 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          model   : GROQ_MODEL,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        })
+      });
+      if (!res.ok) throw new Error('Groq API error: ' + res.status);
+      const data = await res.json();
+      const raw  = data.choices[0].message.content;
+      const clean = raw.replace(/```json|```/g, '').trim();
+      return JSON.parse(clean);
+    }
+
+    // ── STATE ────────────────────────────────────────────────
+    let studyContext = {};
+    let activities   = [];
+    let question     = '';
+    let currentActivityIndex = 0;
+
+    // ── PILL TOGGLE INIT ─────────────────────────────────────
+    function initPillGroup(groupId) {
+      const group = document.getElementById(groupId);
+      group.querySelectorAll('.pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        });
+      });
+    }
+
+    initPillGroup('difficulty-group');
+    initPillGroup('count-group');
+
+    // ── SCREEN SWITCHER ──────────────────────────────────────
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── GET SELECTED PILL VALUE ──────────────────────────────
+    function getSelected(groupId) {
+      const active = document.querySelector(`#${groupId} .pill-btn.selected`);
+      return active ? active.dataset.value : null;
+    }
+
+    // ── RESET ────────────────────────────────────────────────
+    function resetApp() {
+      studyContext = {};
+      activities   = [];
+      question     = '';
+      currentActivityIndex = 0;
+
+      // Reset form fields
+      document.getElementById('concept').value = '';
+      document.getElementById('concept-error').classList.remove('visible');
+      document.getElementById('answer-input').value = '';
+      document.getElementById('answer-error').classList.remove('visible');
+      document.getElementById('global-error').classList.remove('visible');
+
+      // Reset difficulty pills
+      document.querySelectorAll('#difficulty-group .pill-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelector('#difficulty-group [data-value="Easy"]').classList.add('selected');
+
+      // Reset count pills
+      document.querySelectorAll('#count-group .pill-btn').forEach(b => b.classList.remove('selected'));
+      document.querySelector('#count-group [data-value="2"]').classList.add('selected');
+
+      showScreen('screen-form');
+    }
+
+    // ── RENDER PROGRESS DOTS ─────────────────────────────────
+    function renderDots(total, activeIndex) {
+      const container = document.getElementById('progress-dots');
+      container.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (i < activeIndex) dot.classList.add('completed');
+        else if (i === activeIndex) dot.classList.add('active');
+        container.appendChild(dot);
+      }
+    }
+
+    // ── RENDER SUMMARY TAGS ──────────────────────────────────
+    function renderTags() {
+      const container = document.getElementById('summary-tags');
+      const { subject, concept, energy, time } = studyContext;
+      const items = [`${subject} · ${concept}`, energy, time];
+      container.innerHTML = items.map(t => `<span class="tag">${t}</span>`).join('');
+    }
+
+    // ── SHOW ACTIVITY ────────────────────────────────────────
+    function showActivity(index) {
+      const totalDots = activities.length + 1; // activities + question dot
+      renderDots(totalDots, index);
+
+      const stepLabel = document.getElementById('step-label');
+      stepLabel.textContent = `Activity ${index + 1} of ${activities.length}`;
+
+      const act = activities[index];
+      document.getElementById('activity-title').textContent   = act.title       || '';
+      document.getElementById('activity-text').textContent    = act.instruction || '';
+      document.getElementById('activity-purpose').textContent = act.purpose     || '';
+    }
+
+    // ── HANDLE NEXT ACTIVITY ─────────────────────────────────
+    function handleNextActivity() {
+      currentActivityIndex++;
+      if (currentActivityIndex < activities.length) {
+        showActivity(currentActivityIndex);
+      } else {
+        // All activities done → show question screen
+        const totalDots = activities.length + 1;
+        renderDots(totalDots, activities.length); // last dot = question
+        showQuestion();
+      }
+    }
+
+    // ── SHOW QUESTION SCREEN ─────────────────────────────────
+    function showQuestion() {
+      document.getElementById('question-text').textContent = question;
+      document.getElementById('answer-input').value = '';
+      document.getElementById('answer-error').classList.remove('visible');
+      showScreen('screen-question');
+    }
+
+    // ── GENERATE ACTIVITIES ──────────────────────────────────
+    async function handleGenerate() {
+      // Validation
+      const concept = document.getElementById('concept').value.trim();
+      const conceptError = document.getElementById('concept-error');
+
+      if (!concept) {
+        conceptError.classList.add('visible');
+        document.getElementById('concept').focus();
+        return;
+      }
+      conceptError.classList.remove('visible');
+      document.getElementById('global-error').classList.remove('visible');
+
+      // Collect values
+      studyContext = {
+        subject   : document.getElementById('subject').value,
+        concept   : concept,
+        energy    : document.getElementById('energy').value,
+        time      : document.getElementById('time').value,
+        difficulty: getSelected('difficulty-group') || 'Easy',
+        count     : parseInt(getSelected('count-group') || '2', 10)
+      };
+
+      showScreen('screen-loading');
+
+      try {
+        const prompt = `Create learning break activities for a student.
+
+Subject: ${studyContext.subject}
+Concept just learned: ${studyContext.concept}
+Student energy level: ${studyContext.energy}
+Time available: ${studyContext.time}
+Activity difficulty: ${studyContext.difficulty}
+Number of activities: ${studyContext.count}
+
+Rules:
+- Activities must be relaxing, fun, and hands-on
+- Keep them short and doable in the time available
+- Each must directly relate to the concept
+- Suitable for a ${studyContext.energy.toLowerCase()} student
+
+Reply ONLY in this exact JSON format, no extra text:
+{
+  "Activity": [
+    { "title": "Short title", "instruction": "What to do", "purpose": "Why this helps" }
+  ],
+  "question": "One recall question about the concept?"
+}`;
+
+        const data = await callGroq(prompt, GROQ_KEY_ACTIVITIES);
+        activities = (data.Activity || []).map(a => ({
+          title      : a.title       || '',
+          instruction: a.instruction || '',
+          purpose    : a.purpose     || ''
+        }));
+        question = data.question || '';
+
+        if (!activities.length) throw new Error('No activities returned');
+
+        currentActivityIndex = 0;
+        renderTags();
+        showScreen('screen-activity');
+        showActivity(0);
+
+      } catch (err) {
+        console.error('Generate error:', err);
+        showScreen('screen-form');
+        document.getElementById('global-error').classList.add('visible');
+      }
+    }
+
+    // ── SUBMIT ANSWER ────────────────────────────────────────
+    async function handleSubmitAnswer() {
+      const answer = document.getElementById('answer-input').value.trim();
+      const answerError = document.getElementById('answer-error');
+
+      if (!answer) {
+        answerError.classList.add('visible');
+        document.getElementById('answer-input').focus();
+        return;
+      }
+      answerError.classList.remove('visible');
+
+      showScreen('screen-analyzing');
+
+      const payload = {
+        subject : studyContext.subject,
+        concept : studyContext.concept,
+        question: question,
+        answer  : answer
+      };
+
+      try {
+        const prompt = `You are analyzing a student's answer after a study break activity.
+
+Student context:
+- Subject: ${payload.subject}
+- Concept studied: ${payload.concept}
+- Recall question: ${payload.question}
+- Student answer: ${payload.answer}
+
+Classify their understanding as exactly one of:
+- Strong understanding
+- Partial understanding
+- Incorrect
+
+Give 2-3 sentences of warm encouraging feedback.
+If incorrect or partial, give a short helpful hint.
+Write one sentence summarizing the correct answer.
+
+Reply ONLY in this exact JSON format, no extra text:
+{"classification":"Strong understanding","feedback":"...","correct_summary":"..."}`;
+
+        const data = await callGroq(prompt, GROQ_KEY_ANALYZE);
+        renderFeedback(data);
+        showScreen('screen-feedback');
+
+      } catch (err) {
+        console.error('Analyze error:', err);
+        showScreen('screen-form');
+        document.getElementById('global-error').classList.add('visible');
+      }
+    }
+
+    // ── RENDER FEEDBACK ──────────────────────────────────────
+    function renderFeedback(data) {
+      const classification = data.classification || '';
+      const feedback       = data.feedback        || '';
+      const correctSummary = data.correct_summary || '';
+
+      // Badge
+      const badge = document.getElementById('classification-badge');
+      badge.className = 'classification-badge';
+
+      const classLower = classification.toLowerCase();
+      if (classLower.includes('strong')) {
+        badge.classList.add('badge-green');
+      } else if (classLower.includes('partial')) {
+        badge.classList.add('badge-amber');
+      } else {
+        badge.classList.add('badge-red');
+      }
+
+      document.getElementById('classification-text').textContent = classification;
+      document.getElementById('feedback-text').textContent       = feedback;
+      document.getElementById('summary-text').textContent        = correctSummary;
+    }
+  </script>
+</body>
+</html>
