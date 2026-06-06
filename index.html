@@ -47,38 +47,39 @@
       flex-direction: column;
       align-items: center;
       padding: 32px 16px 64px;
+      overflow-x: hidden;
     }
 
     /* ── HEADER ─────────────────────────────────────── */
     .app-header {
       text-align: center;
-      margin-bottom: 32px;
-      max-width: 640px;
+      margin-bottom: 20px;
+      max-width: 900px;
       width: 100%;
     }
 
     .brand-lockup {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
     .brand-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 44px;
+      height: 44px;
       background: var(--accent);
       color: #0a1a0f;
-      border-radius: 10px;
-      font-size: 20px;
+      border-radius: 12px;
+      font-size: 24px;
       font-weight: 900;
       line-height: 1;
     }
     .brand-name {
       font-family: 'Nunito', sans-serif;
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 800;
       color: var(--text);
       letter-spacing: -0.3px;
@@ -90,23 +91,81 @@
     }
 
     .app-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 5vw, 2.6rem);
-      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
       color: var(--text);
-      line-height: 1.2;
+      line-height: 1.15;
       margin-bottom: 10px;
+      letter-spacing: -0.5px;
     }
 
     .app-header p {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    /* ── FEATURE BADGES ──────────────────────────────── */
+    .feature-badges {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      margin-bottom: 28px;
+    }
+
+    .feature-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted-light);
+      letter-spacing: 0.2px;
+    }
+
+    .feature-badge .ficon {
+      font-size: 18px;
+    }
+
+    /* ── FORM WRAPPER WITH ILLUSTRATIONS ──────────── */
+    .form-stage {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+    }
+
+    .illus {
+      flex-shrink: 0;
+      width: 180px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 40px;
+      font-size: 100px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .illus-left  { justify-content: flex-end;  padding-right: 16px; }
+    .illus-right { justify-content: flex-start; padding-left: 16px; }
+
+    @media (max-width: 780px) {
+      .illus { display: none; }
+      .form-stage { max-width: 640px; }
     }
 
     /* ── SCREENS ─────────────────────────────────────── */
-    .screen { display: none; width: 100%; max-width: 640px; }
+    .screen { display: none; width: 100%; max-width: 960px; }
     .screen.active { display: block; }
+    .screen:not(#screen-form) { max-width: 640px; margin: 0 auto; }
 
     /* ── CARD ─────────────────────────────────────── */
     .card {
@@ -468,10 +527,227 @@
       body { padding: 20px 12px 48px; }
       .card { padding: 24px 20px; }
       .btn-row { flex-direction: column; }
+      .feature-badges { gap: 14px; }
     }
+
+    /* ── KEY INPUT SCREEN ───────────────────────────── */
+    .key-screen-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .key-screen-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .key-screen-title {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .key-screen-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .key-screen-subtitle a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .key-screen-subtitle a:hover {
+      text-decoration: underline;
+    }
+
+    .key-input-group {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .key-input-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .key-input-group input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Nunito', monospace;
+      font-size: 13px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .key-input-group input:focus {
+      border-color: rgba(74, 222, 128, 0.5);
+    }
+
+    .key-input-group input::placeholder {
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+
+    .key-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(74, 222, 128, 0.06);
+      border: 1px solid rgba(74, 222, 128, 0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .key-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .key-note p {
+      font-size: 12px;
+      color: var(--muted-light);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .key-note p strong { color: var(--accent); font-weight: 700; }
+
+    .key-error {
+      color: var(--red);
+      font-size: 12px;
+      margin-bottom: 12px;
+      display: none;
+      text-align: left;
+    }
+
+    .key-error.visible { display: block; }
+
+
+    /* ── TRANSLATE BUTTON ───────────────────────────── */
+    .translate-bar {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .translate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      color: var(--muted-light);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .translate-btn:hover {
+      border-color: rgba(74, 222, 128, 0.4);
+      color: var(--accent);
+      background: rgba(74, 222, 128, 0.06);
+    }
+
+    .translate-btn .t-icon { font-size: 15px; }
+
+    /* Hide Google's default translate bar at top */
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0 !important; }
+    .goog-te-gadget { font-size: 0 !important; }
+    .goog-te-gadget select {
+      display: none !important;
+    }
+
+
+    /* ── TRANSLATE ANSWER BUTTON ────────────────────── */
+    .answer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .translate-answer-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-pill);
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .translate-answer-btn:hover {
+      border-color: rgba(74, 222, 128, 0.4);
+      color: var(--accent);
+      background: rgba(74, 222, 128, 0.06);
+    }
+
+    .translate-answer-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .translate-answer-btn .spin {
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .translated-note {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      display: none;
+    }
+
+    .translated-note.visible { display: inline; }
+
   </style>
 </head>
 <body>
+
+  <!-- ═══ TRANSLATE BUTTON ══════════════════════════════════ -->
+  <div class="translate-bar">
+    <button class="translate-btn" onclick="openTranslate()">
+      <span class="t-icon">🌐</span> Translate
+    </button>
+  </div>
+
 
   <!-- ═══ HEADER ═══════════════════════════════════════════ -->
   <header class="app-header">
@@ -479,15 +755,58 @@
       <span class="brand-icon">&#8635;</span>
       <span class="brand-name">MicroReset <span class="brand-ai">AI</span></span>
     </div>
-    <h1>Smart Learning Break Generator</h1>
-    <p>Turn your study break into a memory boost — powered by AI.</p>
+    <h1>Smart Study Break Generator</h1>
+    <p>AI-powered micro-breaks to boost learning and focus</p>
+    <div class="feature-badges">
+      <span class="feature-badge"><span class="ficon">&#128161;</span> Recall Questions</span>
+      <span class="feature-badge"><span class="ficon">&#129504;</span> Active Recall</span>
+      <span class="feature-badge"><span class="ficon">&#8987;</span> Spaced Repetition</span>
+    </div>
   </header>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCREEN 0 · API KEY SETUP                               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div id="screen-keys" class="screen active">
+    <div class="card">
+      <div class="key-screen-inner">
+        <span class="key-screen-icon">&#128273;</span>
+        <h2 class="key-screen-title">Enter Your Groq API Keys</h2>
+        <p class="key-screen-subtitle">
+          MicroReset AI uses the Groq API to generate your activities.<br>
+          Get your free keys at <a href="https://console.groq.com" target="_blank">console.groq.com</a> — it takes under a minute.
+        </p>
+
+        <div class="key-note">
+          <span class="key-note-icon">&#128274;</span>
+          <p><strong>Your keys stay private.</strong> They are stored only in your browser session and never sent to any server other than Groq directly. They disappear when you close the tab.</p>
+        </div>
+
+        <div class="key-input-group">
+          <label>Key 1 — Activity Generation</label>
+          <input type="password" id="key-activities" placeholder="gsk_..." autocomplete="off" />
+        </div>
+
+        <div class="key-input-group">
+          <label>Key 2 — Answer Analysis</label>
+          <input type="password" id="key-analyze" placeholder="gsk_..." autocomplete="off" />
+        </div>
+
+        <p class="key-error" id="key-error">Please enter both API keys to continue.</p>
+
+        <button class="btn btn-primary" onclick="handleSaveKeys()">Start Using MicroReset AI ✦</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
   <!-- SCREEN 1 · INPUT FORM                                  -->
   <!-- ═══════════════════════════════════════════════════════ -->
-  <div id="screen-form" class="screen active">
-    <div class="card">
+  <div id="screen-form" class="screen">
+    <div class="form-stage">
+      <div class="illus illus-left">&#129300;</div>
+      <div style="flex:1; min-width:0;">
+      <div class="card">
 
       <div id="global-error" class="global-error">⚠ Something went wrong. Please try again.</div>
 
@@ -557,6 +876,9 @@
 
       <button class="btn btn-primary" id="generate-btn" onclick="handleGenerate()">Generate Smart Break ✦</button>
     </div>
+    </div>
+      <div class="illus illus-right">&#129302;</div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
@@ -601,9 +923,16 @@
       <p class="question-text" id="question-text"></p>
 
       <div class="form-group">
-        <label class="form-label" for="answer-input">Your Answer</label>
-        <textarea id="answer-input" placeholder="Type your answer here…"></textarea>
+        <label class="form-label" for="answer-input">Your Answer <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px;">— type in any language</span></label>
+        <textarea id="answer-input" placeholder="Type your answer here… (ඕනෑම භාෂාවකින් ලිවිය හැකිය)"></textarea>
         <span id="answer-error" class="error-msg">Please write your answer before submitting.</span>
+      </div>
+
+      <div class="answer-actions">
+        <button class="translate-answer-btn" id="translate-answer-btn" onclick="handleTranslateAnswer()">
+          <span id="translate-btn-icon">🌐</span> Translate to English
+        </button>
+        <span class="translated-note" id="translated-note">✓ Translated to English</span>
       </div>
 
       <button class="btn btn-primary" id="submit-btn" onclick="handleSubmitAnswer()">Submit Answer →</button>
@@ -651,10 +980,37 @@
   <!-- ═══════════════════════════════════════════════════════ -->
   <script>
     // ── GROQ API ─────────────────────────────────────────────
-    const GROQ_KEY_ACTIVITIES = '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';  // Key for generating activities & question
-    const GROQ_KEY_ANALYZE    = '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';  // Key for analysing answers
-    const GROQ_URL            = 'https://api.groq.com/openai/v1/chat/completions';
-    const GROQ_MODEL          = 'llama-3.3-70b-versatile';
+    const GROQ_URL   = 'https://api.groq.com/openai/v1/chat/completions';
+    const GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+    function getKeys() {
+      return {
+        activities: sessionStorage.getItem('mrk1') || '',
+        analyze   : sessionStorage.getItem('mrk2') || ''
+      };
+    }
+
+    function handleSaveKeys() {
+      const k1 = document.getElementById('key-activities').value.trim();
+      const k2 = document.getElementById('key-analyze').value.trim();
+      const errEl = document.getElementById('key-error');
+
+      if (!k1 || !k2) {
+        errEl.classList.add('visible');
+        return;
+      }
+
+      if (!k1.startsWith('gsk_') || !k2.startsWith('gsk_')) {
+        errEl.textContent = 'Keys should start with gsk_ — please check and try again.';
+        errEl.classList.add('visible');
+        return;
+      }
+
+      errEl.classList.remove('visible');
+      sessionStorage.setItem('mrk1', k1);
+      sessionStorage.setItem('mrk2', k2);
+      showScreen('screen-form');
+    }
 
     async function callGroq(prompt, apiKey) {
       const res = await fetch(GROQ_URL, {
@@ -720,6 +1076,7 @@
       document.getElementById('concept').value = '';
       document.getElementById('concept-error').classList.remove('visible');
       document.getElementById('answer-input').value = '';
+      document.getElementById('translated-note').classList.remove('visible');
       document.getElementById('answer-error').classList.remove('visible');
       document.getElementById('global-error').classList.remove('visible');
 
@@ -786,6 +1143,7 @@
     function showQuestion() {
       document.getElementById('question-text').textContent = question;
       document.getElementById('answer-input').value = '';
+      document.getElementById('translated-note').classList.remove('visible');
       document.getElementById('answer-error').classList.remove('visible');
       showScreen('screen-question');
     }
@@ -840,7 +1198,7 @@ Reply ONLY in this exact JSON format, no extra text:
   "question": "One recall question about the concept?"
 }`;
 
-        const data = await callGroq(prompt, GROQ_KEY_ACTIVITIES);
+        const data = await callGroq(prompt, getKeys().activities);
         activities = (data.Activity || []).map(a => ({
           title      : a.title       || '',
           instruction: a.instruction || '',
@@ -863,6 +1221,54 @@ Reply ONLY in this exact JSON format, no extra text:
     }
 
     // ── SUBMIT ANSWER ────────────────────────────────────────
+    // ── TRANSLATE ANSWER ─────────────────────────────────────
+    async function handleTranslateAnswer() {
+      const answer = document.getElementById('answer-input').value.trim();
+      if (!answer) return;
+
+      const btn     = document.getElementById('translate-answer-btn');
+      const icon    = document.getElementById('translate-btn-icon');
+      const note    = document.getElementById('translated-note');
+
+      btn.disabled  = true;
+      icon.textContent = '⟳';
+      icon.classList.add('spin');
+
+      try {
+        const prompt = `Translate the following text to English. 
+Return ONLY the translated text, nothing else. No explanation, no quotes.
+If the text is already in English, return it exactly as is.
+
+Text to translate: ${answer}`;
+
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method : 'POST',
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': 'Bearer ' + getKeys().analyze
+          },
+          body: JSON.stringify({
+            model   : 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.1
+          })
+        });
+
+        const data       = await res.json();
+        const translated = data.choices[0].message.content.trim();
+
+        document.getElementById('answer-input').value = translated;
+        note.classList.add('visible');
+
+      } catch (err) {
+        console.error('Translation error:', err);
+      } finally {
+        btn.disabled = false;
+        icon.textContent = '🌐';
+        icon.classList.remove('spin');
+      }
+    }
+
     async function handleSubmitAnswer() {
       const answer = document.getElementById('answer-input').value.trim();
       const answerError = document.getElementById('answer-error');
@@ -885,6 +1291,8 @@ Reply ONLY in this exact JSON format, no extra text:
 
       try {
         const prompt = `You are analyzing a student's answer after a study break activity.
+The student may have written their answer in any language including Sinhala, Tamil, or other languages.
+If the answer is not in English, silently translate it to English first, then analyze it.
 
 Student context:
 - Subject: ${payload.subject}
@@ -904,7 +1312,7 @@ Write one sentence summarizing the correct answer.
 Reply ONLY in this exact JSON format, no extra text:
 {"classification":"Strong understanding","feedback":"...","correct_summary":"..."}`;
 
-        const data = await callGroq(prompt, GROQ_KEY_ANALYZE);
+        const data = await callGroq(prompt, getKeys().analyze);
         renderFeedback(data);
         showScreen('screen-feedback');
 
@@ -938,6 +1346,56 @@ Reply ONLY in this exact JSON format, no extra text:
       document.getElementById('feedback-text').textContent       = feedback;
       document.getElementById('summary-text').textContent        = correctSummary;
     }
+  </script>
+
+  <!-- ═══ GOOGLE TRANSLATE ═══════════════════════════════════ -->
+  <div id="google_translate_element" style="display:none;"></div>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'si,ta,fr,de,es,zh-CN,ar,hi,ja,ko,pt,ru,tr',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    function openTranslate() {
+      const select = document.querySelector('.goog-te-combo');
+      if (select) {
+        select.style.display = 'block';
+        select.style.position = 'fixed';
+        select.style.top = '56px';
+        select.style.right = '16px';
+        select.style.zIndex = '99999';
+        select.style.background = '#1c2333';
+        select.style.color = '#e8eaf0';
+        select.style.border = '1px solid rgba(74,222,128,0.3)';
+        select.style.borderRadius = '10px';
+        select.style.padding = '8px 12px';
+        select.style.fontSize = '13px';
+        select.style.fontFamily = 'Nunito, sans-serif';
+        select.style.cursor = 'pointer';
+        select.style.outline = 'none';
+        select.focus();
+        select.addEventListener('change', () => {
+          setTimeout(() => { select.style.display = 'none'; }, 400);
+        }, { once: true });
+        // Click outside to close
+        setTimeout(() => {
+          document.addEventListener('click', function hideSelect(e) {
+            if (e.target !== select) {
+              select.style.display = 'none';
+              document.removeEventListener('click', hideSelect);
+            }
+          });
+        }, 100);
+      }
+    }
+  </script>
+  <script type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
   </script>
 </body>
 </html>
