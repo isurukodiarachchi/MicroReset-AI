@@ -829,7 +829,7 @@
 
         <div class="key-input-group">
           <label>Groq API Key</label>
-          <input type="password" id="key-activities" placeholder="gsk_..." autocomplete="off" />
+          <input type="password" id="key-activities" placeholder="gsk_..." autocomplete="off" class="notranslate" translate="no" />
         </div>
 
         <p class="key-error" id="key-error">Please enter your API key to continue.</p>
@@ -853,7 +853,7 @@
       <!-- Subject -->
       <div class="form-group">
         <label class="form-label" for="subject">Subject</label>
-        <select id="subject">
+        <select id="subject" class="notranslate" translate="no">
           <option value="Physics">Physics</option>
           <option value="Mathematics">Mathematics</option>
           <option value="Biology">Biology</option>
@@ -869,25 +869,41 @@
 
       <!-- Concept Learned -->
       <div class="form-group">
-        <label class="form-label" for="concept">Concept Learned</label>
-        <input type="text" id="concept" placeholder="e.g. Momentum" autocomplete="off" />
-        <span id="concept-error" class="error-msg">Please enter the concept you learned.</span>
+        <label class="form-label" for="concept">Describe what you learned / studied <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px;">— type in any language</span></label>
+        <textarea id="concept" rows="2" placeholder="e.g. I studied Momentum in Physics — the product of mass and velocity…" autocomplete="off" class="notranslate" translate="no" style="min-height:72px;resize:vertical;"></textarea>
+        <div class="answer-actions" style="margin-top:6px;margin-bottom:0;">
+          <button class="translate-answer-btn" id="translate-concept-btn" onclick="handleTranslateConcept()">
+            <span id="translate-concept-icon">🌐</span> Translate to English
+          </button>
+          <span class="translated-note" id="translated-concept-note">✓ Translated to English</span>
+        </div>
+        <span id="concept-error" class="error-msg">Please describe what you learned.</span>
       </div>
 
       <!-- Energy Level -->
       <div class="form-group">
         <label class="form-label" for="energy">Energy Level</label>
-        <select id="energy">
+        <select id="energy" class="notranslate" translate="no">
           <option value="Tired">Tired</option>
           <option value="Normal" selected>Normal</option>
           <option value="Energetic">Energetic</option>
         </select>
       </div>
 
+      <!-- Student Level -->
+      <div class="form-group">
+        <label class="form-label">Your Level</label>
+        <div class="pill-group" id="level-group">
+          <button class="pill-btn" onclick="selectPill(this, 'level-group')">O/L</button>
+          <button class="pill-btn selected" onclick="selectPill(this, 'level-group')">A/L</button>
+          <button class="pill-btn" onclick="selectPill(this, 'level-group')">University</button>
+        </div>
+      </div>
+
       <!-- Time Available -->
       <div class="form-group">
         <label class="form-label" for="time">Time Available</label>
-        <select id="time">
+        <select id="time" class="notranslate" translate="no">
           <option value="2 minutes">2 minutes</option>
           <option value="5 minutes" selected>5 minutes</option>
           <option value="10 minutes">10 minutes</option>
@@ -964,7 +980,7 @@
 
       <div class="form-group">
         <label class="form-label" for="answer-input">Your Answer <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:11px;">— type in any language</span></label>
-        <textarea id="answer-input" placeholder="Type your answer here… (ඕනෑම භාෂාවකින් ලිවිය හැකිය)"></textarea>
+        <textarea id="answer-input" class="notranslate" translate="no" placeholder="Type your answer here… (ඕනෑම භාෂාවකින් ලිවිය හැකිය)"></textarea>
         <span id="answer-error" class="error-msg">Please write your answer before submitting.</span>
       </div>
 
@@ -1113,6 +1129,7 @@
 
       // Reset form fields
       document.getElementById('concept').value = '';
+      document.getElementById('translated-concept-note').classList.remove('visible');
       document.getElementById('concept-error').classList.remove('visible');
       document.getElementById('answer-input').value = '';
       document.getElementById('translated-note').classList.remove('visible');
@@ -1146,8 +1163,8 @@
     // ── RENDER SUMMARY TAGS ──────────────────────────────────
     function renderTags() {
       const container = document.getElementById('summary-tags');
-      const { subject, concept, energy, time } = studyContext;
-      const items = [`${subject} · ${concept}`, energy, time];
+      const { subject, concept, energy, level, time } = studyContext;
+      const items = [`${subject} · ${concept}`, level, energy, time];
       container.innerHTML = items.map(t => `<span class="tag">${t}</span>`).join('');
     }
 
@@ -1206,6 +1223,7 @@
         subject   : document.getElementById('subject').value,
         concept   : concept,
         energy    : document.getElementById('energy').value,
+        level     : getSelected('level-group') || 'A/L',
         time      : document.getElementById('time').value,
         difficulty: getSelected('difficulty-group') || 'Easy',
         count     : parseInt(getSelected('count-group') || '2', 10)
@@ -1218,6 +1236,7 @@
 
 Subject: ${studyContext.subject}
 Concept just learned: ${studyContext.concept}
+Student level: ${studyContext.level}
 Student energy level: ${studyContext.energy}
 Time available: ${studyContext.time}
 Activity difficulty: ${studyContext.difficulty}
@@ -1228,13 +1247,14 @@ Rules:
 - Keep them short and doable in the time available
 - Each must directly relate to the concept
 - Suitable for a ${studyContext.energy.toLowerCase()} student
+- Complexity and vocabulary must match a ${studyContext.level} student level
 
 Reply ONLY in this exact JSON format, no extra text:
 {
   "Activity": [
     { "title": "Short title", "instruction": "What to do", "purpose": "Why this helps" }
   ],
-  "question": "One recall question about the concept?"
+  "question": "One recall question about the concept appropriate for ${studyContext.level} level?"
 }`;
 
         const data = await callGroq(prompt, getKeys().activities);
@@ -1260,6 +1280,54 @@ Reply ONLY in this exact JSON format, no extra text:
     }
 
     // ── SUBMIT ANSWER ────────────────────────────────────────
+
+    // ── TRANSLATE CONCEPT ────────────────────────────────────
+    async function handleTranslateConcept() {
+      const text = document.getElementById('concept').value.trim();
+      if (!text) return;
+
+      const btn  = document.getElementById('translate-concept-btn');
+      const icon = document.getElementById('translate-concept-icon');
+      const note = document.getElementById('translated-concept-note');
+
+      btn.disabled = true;
+      icon.textContent = '⟳';
+      icon.classList.add('spin');
+
+      try {
+        const prompt = `Translate the following text to English.
+Return ONLY the translated text, nothing else. No explanation, no quotes.
+If the text is already in English, return it exactly as is.
+
+Text to translate: ${text}`;
+
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method : 'POST',
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization': 'Bearer ' + getKeys().activities
+          },
+          body: JSON.stringify({
+            model      : 'llama-3.3-70b-versatile',
+            messages   : [{ role: 'user', content: prompt }],
+            temperature: 0.1
+          })
+        });
+
+        const data       = await res.json();
+        const translated = data.choices[0].message.content.trim();
+        document.getElementById('concept').value = translated;
+        note.classList.add('visible');
+
+      } catch (err) {
+        console.error('Concept translation error:', err);
+      } finally {
+        btn.disabled = false;
+        icon.textContent = '🌐';
+        icon.classList.remove('spin');
+      }
+    }
+
     // ── TRANSLATE ANSWER ─────────────────────────────────────
     async function handleTranslateAnswer() {
       const answer = document.getElementById('answer-input').value.trim();
@@ -1324,6 +1392,7 @@ Text to translate: ${answer}`;
       const payload = {
         subject : studyContext.subject,
         concept : studyContext.concept,
+        level   : studyContext.level,
         question: question,
         answer  : answer
       };
@@ -1336,6 +1405,7 @@ If the answer is not in English, silently translate it to English first, then an
 Student context:
 - Subject: ${payload.subject}
 - Concept studied: ${payload.concept}
+- Student level: ${payload.level}
 - Recall question: ${payload.question}
 - Student answer: ${payload.answer}
 
