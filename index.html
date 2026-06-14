@@ -775,20 +775,14 @@
   <!-- ═══ TRANSLATE BUTTON ══════════════════════════════════ -->
   <div class="translate-bar">
     <div class="translate-wrapper">
-      <button class="translate-btn" onclick="openTranslate()">
-        <span class="t-icon">🌐</span> Translate
+      <button class="translate-btn" id="translate-main-btn" onclick="openTranslate()">
+        <span class="t-icon" id="translate-flag">🌐</span>
+        <span id="translate-label">Translate</span>
       </button>
       <div class="lang-dropdown" id="lang-dropdown">
-        <button class="lang-option active" onclick="setLang('en', this)">🇬🇧 English</button>
-        <button class="lang-option" onclick="setLang('si', this)">🇱🇰 සිංහල</button>
-        <button class="lang-option" onclick="setLang('ta', this)">🇱🇰 தமிழ்</button>
-        <button class="lang-option" onclick="setLang('fr', this)">🇫🇷 Français</button>
-        <button class="lang-option" onclick="setLang('de', this)">🇩🇪 Deutsch</button>
-        <button class="lang-option" onclick="setLang('es', this)">🇪🇸 Español</button>
-        <button class="lang-option" onclick="setLang('hi', this)">🇮🇳 हिन्दी</button>
-        <button class="lang-option" onclick="setLang('zh-CN', this)">🇨🇳 中文</button>
-        <button class="lang-option" onclick="setLang('ar', this)">🇸🇦 العربية</button>
-        <button class="lang-option" onclick="setLang('ja', this)">🇯🇵 日本語</button>
+        <button class="lang-option active" id="lang-en" onclick="setLang('en', this)">🇬🇧 English</button>
+        <button class="lang-option" id="lang-si" onclick="setLang('si', this)">🇱🇰 සිංහල</button>
+        <button class="lang-option" id="lang-ta" onclick="setLang('ta', this)">🇱🇰 தமிழ்</button>
       </div>
     </div>
   </div>
@@ -816,15 +810,15 @@
     <div class="card">
       <div class="key-screen-inner">
         <span class="key-screen-icon">&#128273;</span>
-        <h2 class="key-screen-title">Enter Your Groq API Key</h2>
+        <h2 class="key-screen-title" data-ui="key_title">Enter Your Groq API Key</h2>
         <p class="key-screen-subtitle">
           MicroReset AI uses the Groq API to power your activities.<br>
-          Get your free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a> — it takes under a minute.
+          Get your free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a> — <span data-ui="key_subtitle">it takes under a minute.</span>
         </p>
 
         <div class="key-note">
           <span class="key-note-icon">&#128274;</span>
-          <p><strong>Your key stays private.</strong> It is stored only in your browser session and never sent to any server other than Groq directly. It disappears when you close the tab.</p>
+          <p><strong data-ui="key_private_title">Your key stays private.</strong> It is stored only in your browser session and never sent to any server other than Groq directly. It disappears when you close the tab.</p>
         </div>
 
         <div class="key-input-group">
@@ -852,7 +846,7 @@
 
       <!-- Subject -->
       <div class="form-group">
-        <label class="form-label" for="subject">Subject</label>
+        <label class="form-label" for="subject" data-ui="label_subject">Subject</label>
         <select id="subject" class="notranslate" translate="no">
           <option value="Physics">Physics</option>
           <option value="Mathematics">Mathematics</option>
@@ -882,7 +876,7 @@
 
       <!-- Energy Level -->
       <div class="form-group">
-        <label class="form-label" for="energy">Energy Level</label>
+        <label class="form-label" for="energy" data-ui="label_energy">Energy Level</label>
         <select id="energy" class="notranslate" translate="no">
           <option value="Tired">Tired</option>
           <option value="Normal" selected>Normal</option>
@@ -892,7 +886,7 @@
 
       <!-- Student Level -->
       <div class="form-group">
-        <label class="form-label">Your Level</label>
+        <label class="form-label" data-ui="label_level">Your Level</label>
         <div class="pill-group" id="level-group">
           <button class="pill-btn" onclick="selectPill(this, 'level-group')">O/L</button>
           <button class="pill-btn selected" onclick="selectPill(this, 'level-group')">A/L</button>
@@ -902,7 +896,7 @@
 
       <!-- Time Available -->
       <div class="form-group">
-        <label class="form-label" for="time">Time Available</label>
+        <label class="form-label" for="time" data-ui="label_time">Time Available</label>
         <select id="time" class="notranslate" translate="no">
           <option value="2 minutes">2 minutes</option>
           <option value="5 minutes" selected>5 minutes</option>
@@ -912,7 +906,7 @@
 
       <!-- Activity Difficulty -->
       <div class="form-group">
-        <label class="form-label">Activity Difficulty</label>
+        <label class="form-label" data-ui="label_difficulty">Activity Difficulty</label>
         <div class="pill-group" id="difficulty-group">
           <button class="pill-btn selected" data-value="Easy">Easy</button>
           <button class="pill-btn" data-value="Medium">Medium</button>
@@ -922,7 +916,7 @@
 
       <!-- Number of Activities -->
       <div class="form-group">
-        <label class="form-label">Number of Activities</label>
+        <label class="form-label" data-ui="label_count">Number of Activities</label>
         <div class="pill-group" id="count-group">
           <button class="pill-btn" data-value="1">1</button>
           <button class="pill-btn selected" data-value="2">2</button>
@@ -930,7 +924,7 @@
         </div>
       </div>
 
-      <button class="btn btn-primary" id="generate-btn" onclick="handleGenerate()">Generate Smart Break ✦</button>
+      <button class="btn btn-primary" id="generate-btn" onclick="handleGenerate()" data-ui="btn_generate">Generate Smart Break ✦</button>
     </div>
     </div>
       <div class="illus illus-right">&#129302;</div>
@@ -943,7 +937,7 @@
   <div id="screen-loading" class="screen">
     <div class="card loading-screen">
       <div class="spinner"></div>
-      <p class="loading-text">Creating your personalized break activities…</p>
+      <p class="loading-text" data-ui="msg_loading">Creating your personalized break activities…</p>
     </div>
   </div>
 
@@ -975,7 +969,7 @@
   <!-- ═══════════════════════════════════════════════════════ -->
   <div id="screen-question" class="screen">
     <div class="card">
-      <p class="screen-label amber">🧠 Memory Check</p>
+      <p class="screen-label amber" data-ui="label_memory">🧠 Memory Check</p>
       <p class="question-text" id="question-text"></p>
 
       <div class="form-group">
@@ -991,7 +985,7 @@
         <span class="translated-note" id="translated-note">✓ Translated to English</span>
       </div>
 
-      <button class="btn btn-primary" id="submit-btn" onclick="handleSubmitAnswer()">Submit Answer →</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="handleSubmitAnswer()" data-ui="btn_submit">Submit Answer →</button>
     </div>
   </div>
 
@@ -1001,7 +995,7 @@
   <div id="screen-analyzing" class="screen">
     <div class="card loading-screen">
       <div class="spinner"></div>
-      <p class="loading-text">Analyzing your answer…</p>
+      <p class="loading-text" data-ui="msg_analyzing">Analyzing your answer…</p>
     </div>
   </div>
 
@@ -1010,7 +1004,7 @@
   <!-- ═══════════════════════════════════════════════════════ -->
   <div id="screen-feedback" class="screen">
     <div class="card">
-      <p class="screen-label muted">Your Result</p>
+      <p class="screen-label muted" data-ui="label_result">Your Result</p>
 
       <div id="classification-badge" class="classification-badge">
         <span class="dot-indicator"></span>
@@ -1021,12 +1015,12 @@
 
       <hr class="divider" />
 
-      <p class="screen-label muted">Quick Recap</p>
+      <p class="screen-label muted" data-ui="label_recap">Quick Recap</p>
       <p class="summary-text" id="summary-text"></p>
 
       <div class="btn-row">
-        <button class="btn btn-outline" onclick="resetApp()">← New Break</button>
-        <button class="btn btn-primary" onclick="resetApp()">Study Again ✦</button>
+        <button class="btn btn-outline" onclick="resetApp()" data-ui="btn_newbreak">← New Break</button>
+        <button class="btn btn-primary" onclick="resetApp()" data-ui="btn_studyagain">Study Again ✦</button>
       </div>
     </div>
   </div>
@@ -1458,6 +1452,31 @@ Reply ONLY in this exact JSON format, no extra text:
   </script>
 
   <script>
+    // ── UI STRINGS (all translatable text) ──────────────────
+    const UI = {
+      en: null, // original DOM — always read fresh
+      si: null,
+      ta: null
+    };
+
+    // Collect all elements with data-ui attribute into an object
+    function collectStrings() {
+      const out = {};
+      document.querySelectorAll('[data-ui]').forEach(el => {
+        out[el.getAttribute('data-ui')] = el.textContent.trim();
+      });
+      return out;
+    }
+
+    // Apply a strings object to the DOM
+    function applyStrings(strings) {
+      document.querySelectorAll('[data-ui]').forEach(el => {
+        const key = el.getAttribute('data-ui');
+        if (strings[key]) el.textContent = strings[key];
+      });
+    }
+
+    // ── TRANSLATE BUTTON ─────────────────────────────────────
     function openTranslate() {
       const dd = document.getElementById('lang-dropdown');
       dd.classList.toggle('open');
@@ -1473,21 +1492,90 @@ Reply ONLY in this exact JSON format, no extra text:
       }
     }
 
-    function setLang(lang, el) {
+    let currentLang = 'en';
+    let originalStrings = null;
+
+    async function setLang(lang, el) {
       document.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
       el.classList.add('active');
       document.getElementById('lang-dropdown').classList.remove('open');
 
       if (lang === 'en') {
-        // Restore original — reload without hash
-        const url = window.location.href.split('#')[0].split('?')[0];
-        window.location.href = url;
+        currentLang = 'en';
+        document.getElementById('translate-flag').textContent = '🌐';
+        document.getElementById('translate-label').textContent = 'Translate';
+        if (originalStrings) applyStrings(originalStrings);
         return;
       }
 
-      // Use Google Translate URL trick — works without widget
-      const pageUrl = encodeURIComponent(window.location.href);
-      window.location.href = `https://translate.google.com/translate?sl=en&tl=${lang}&u=${pageUrl}`;
+      // Save originals once
+      if (!originalStrings) {
+        originalStrings = collectStrings();
+      }
+
+      // Use cached translation if available
+      if (UI[lang]) {
+        applyStrings(UI[lang]);
+        currentLang = lang;
+        const flags = { si: '🇱🇰', ta: '🇱🇰' };
+        const names = { si: 'සිංහල', ta: 'தமிழ்' };
+        document.getElementById('translate-flag').textContent = flags[lang] || '🌐';
+        document.getElementById('translate-label').textContent = names[lang] || lang;
+        return;
+      }
+
+      // Show loading state
+      const btn = document.getElementById('translate-main-btn');
+      btn.disabled = true;
+      document.getElementById('translate-flag').textContent = '⟳';
+      document.getElementById('translate-label').textContent = '...';
+
+      try {
+        const langNames = { si: 'Sinhala', ta: 'Tamil' };
+        const strings = collectStrings();
+        const jsonStr = JSON.stringify(strings);
+
+        const prompt = `Translate the following JSON object values into ${langNames[lang]}.
+Keep all JSON keys exactly the same.
+Keep placeholders like {count}, {subject} unchanged.
+Return ONLY valid JSON, no explanation, no markdown.
+
+${jsonStr}`;
+
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getKeys().activities
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.1
+          })
+        });
+
+        const data = await res.json();
+        const raw  = data.choices[0].message.content;
+        const clean = raw.replace(/```json|```/g, '').trim();
+        const translated = JSON.parse(clean);
+
+        UI[lang] = translated;
+        applyStrings(translated);
+        currentLang = lang;
+
+        const flags = { si: '🇱🇰', ta: '🇱🇰' };
+        const names = { si: 'සිංහල', ta: 'தமிழ்' };
+        document.getElementById('translate-flag').textContent = flags[lang];
+        document.getElementById('translate-label').textContent = names[lang];
+
+      } catch(e) {
+        console.error('UI translation error:', e);
+        document.getElementById('translate-flag').textContent = '🌐';
+        document.getElementById('translate-label').textContent = 'Translate';
+      } finally {
+        btn.disabled = false;
+      }
     }
   </script>
 </body>
