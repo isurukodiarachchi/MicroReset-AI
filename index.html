@@ -1032,6 +1032,10 @@
     // ── GROQ API ─────────────────────────────────────────────
     const GROQ_URL   = 'https://api.groq.com/openai/v1/chat/completions';
     const GROQ_MODEL = 'llama-3.3-70b-versatile';
+    let currentLang  = 'en';
+    let originalStrings = null;
+
+    const LANG_NAMES = { en: 'English', si: 'Sinhala', ta: 'Tamil' };
 
     function getKeys() {
       return {
@@ -1226,6 +1230,8 @@
       showScreen('screen-loading');
 
       try {
+        const targetLang = LANG_NAMES[currentLang] || 'English';
+
         const prompt = `Create learning break activities for a student.
 
 Subject: ${studyContext.subject}
@@ -1242,13 +1248,14 @@ Rules:
 - Each must directly relate to the concept
 - Suitable for a ${studyContext.energy.toLowerCase()} student
 - Complexity and vocabulary must match a ${studyContext.level} student level
+- Write the "title", "instruction", "purpose", and "question" fields entirely in ${targetLang}. Do not mix languages.
 
 Reply ONLY in this exact JSON format, no extra text:
 {
   "Activity": [
-    { "title": "Short title", "instruction": "What to do", "purpose": "Why this helps" }
+    { "title": "Short title in ${targetLang}", "instruction": "What to do, in ${targetLang}", "purpose": "Why this helps, in ${targetLang}" }
   ],
-  "question": "One recall question about the concept appropriate for ${studyContext.level} level?"
+  "question": "One recall question about the concept, in ${targetLang}, appropriate for ${studyContext.level} level?"
 }`;
 
         const data = await callGroq(prompt, getKeys().activities);
@@ -1392,6 +1399,8 @@ Text to translate: ${answer}`;
       };
 
       try {
+        const targetLang = LANG_NAMES[currentLang] || 'English';
+
         const prompt = `You are analyzing a student's answer after a study break activity.
 The student may have written their answer in any language including Sinhala, Tamil, or other languages.
 If the answer is not in English, silently translate it to English first, then analyze it.
@@ -1403,17 +1412,19 @@ Student context:
 - Recall question: ${payload.question}
 - Student answer: ${payload.answer}
 
-Classify their understanding as exactly one of:
+Classify their understanding as exactly one of these three English labels (always in English, never translate this field):
 - Strong understanding
 - Partial understanding
 - Incorrect
 
-Give 2-3 sentences of warm encouraging feedback.
-If incorrect or partial, give a short helpful hint.
-Write one sentence summarizing the correct answer.
+Then write a "classification_label" field — the same classification translated naturally into ${targetLang}.
+
+Give 2-3 sentences of warm encouraging feedback, written entirely in ${targetLang}.
+If incorrect or partial, give a short helpful hint, also in ${targetLang}.
+Write one sentence summarizing the correct answer, also in ${targetLang}.
 
 Reply ONLY in this exact JSON format, no extra text:
-{"classification":"Strong understanding","feedback":"...","correct_summary":"..."}`;
+{"classification":"Strong understanding","classification_label":"...","feedback":"...","correct_summary":"..."}`;
 
         const data = await callGroq(prompt, getKeys().analyze);
         renderFeedback(data);
@@ -1429,10 +1440,11 @@ Reply ONLY in this exact JSON format, no extra text:
     // ── RENDER FEEDBACK ──────────────────────────────────────
     function renderFeedback(data) {
       const classification = data.classification || '';
-      const feedback       = data.feedback        || '';
-      const correctSummary = data.correct_summary || '';
+      const classLabel      = data.classification_label || classification;
+      const feedback        = data.feedback        || '';
+      const correctSummary  = data.correct_summary || '';
 
-      // Badge
+      // Badge — always uses the English classification field for reliable color logic
       const badge = document.getElementById('classification-badge');
       badge.className = 'classification-badge';
 
@@ -1445,7 +1457,8 @@ Reply ONLY in this exact JSON format, no extra text:
         badge.classList.add('badge-red');
       }
 
-      document.getElementById('classification-text').textContent = classification;
+      // Display the translated label to the student
+      document.getElementById('classification-text').textContent = classLabel;
       document.getElementById('feedback-text').textContent       = feedback;
       document.getElementById('summary-text').textContent        = correctSummary;
     }
@@ -1491,9 +1504,6 @@ Reply ONLY in this exact JSON format, no extra text:
         }, 100);
       }
     }
-
-    let currentLang = 'en';
-    let originalStrings = null;
 
     async function setLang(lang, el) {
       document.querySelectorAll('.lang-option').forEach(b => b.classList.remove('active'));
